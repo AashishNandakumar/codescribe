@@ -1,6 +1,7 @@
 from typing import List, Dict
 
 
+# DSA used here
 def sort_contents(contents: List[Dict]) -> List[Dict]:
     return sorted(contents, key=lambda x: x["path"])
 
@@ -22,7 +23,7 @@ def build_directory_structure(contents: List[Dict]) -> str:
         items = list(node.items())
         for i, (name, subtree) in enumerate(items):
             is_last = i == len(items) - 1
-            result += f"{prefix}{'└──' if is_last else '├── '}{name}\n"
+            result += f"{prefix}{'└── ' if is_last else '├── '}{name}\n"
             if subtree is not None:
                 result += build_tree(subtree, prefix + ("    " if is_last else "│   "))
         return result

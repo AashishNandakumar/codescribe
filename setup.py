@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="codescribe",
-    version="0.1.0",
+    version="0.1.4",
     author="Aashish Nandakumar",
     author_email="aashishnkumar@gmail.com",
     description="A package to GitHub repositories to formatted text",
