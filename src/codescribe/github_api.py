@@ -1,7 +1,8 @@
 import requests
+import re
 import base64
 from typing import Dict, List, Tuple
-import re
+import os
 
 
 class GithubAPI:
@@ -49,33 +50,44 @@ class GithubAPI:
         return response.json()["tree"]
 
     def fetch_file_contents(self, url: str) -> str:
-        # headers = self.headers.copy()
-        self.headers["Accept"] = "application/vnd.github.v3.raw"
-
         response = requests.get(url, headers=self.headers)
         response.raise_for_status()
-        # content = response.json()
-        return response.json().get("content", "")
+        content = response.json()
+        # return response.json().get("content", "")
 
-        # if content.get("encoding") == "base64":
-        #     return base64.b64decode(content["content"]).decode(
-        #         "utf-8", errors="replace"
-        #     )
-        # else:
-        #     return content.get("content", "")
+        if content.get("encoding") == "base64":
+            return base64.b64decode(content["content"]).decode(
+                "utf-8", errors="replace"
+            )
+        else:
+            return content.get("content", "")
 
     def get_repo_contents(self, repo_url: str) -> List[Dict]:
         owner, repo, ref, path = self.parse_repo_url(repo_url)
         sha = self.fetch_repo_sha(owner, repo, ref, path)
         tree = self.fetch_repo_tree(owner, repo, sha)
         contents = []
+        excluded_extensions = [
+            ".gz",
+            ".tar.gz",
+            ".zip",
+            ".whl",
+            ".exe",
+            ".bin",
+            ".jar",
+            ".war",
+            ".rar",
+            ".7z",
+        ]
         for item in tree:
             if item["type"] == "blob":
-                content = self.fetch_file_contents(item["url"])
-                contents.append(
-                    {
-                        "path": item["path"],
-                        "content": content,
-                    }
-                )
+                file_extension = os.path.splitext(item["path"])[1].lower()
+                if file_extension not in excluded_extensions:
+                    content = self.fetch_file_contents(item["url"])
+                    contents.append(
+                        {
+                            "path": item["path"],
+                            "content": content,
+                        }
+                    )
         return contents

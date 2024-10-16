@@ -1,21 +1,17 @@
 Metadata-Version: 2.1
 Name: codescribe
-Version: 0.1.4
-Summary: A package to GitHub repositories to formatted text
+Version: 1.0.1
+Summary: A package to convert GitHub repositories to formatted text.
 Home-page: https://github.com/AashishNandakumar/codescribe
 Author: Aashish Nandakumar
 Author-email: aashishnkumar@gmail.com
-License: UNKNOWN
-Platform: UNKNOWN
-Classifier: Development Status :: 3 - Alpha
-Classifier: Intended Audience :: Developers
+Project-URL: issue_tracker, https://github.com/AashishNandakumar/codescribe/issues
+Project-URL: repository, https://github.com/AashishNandakumar/codescribe
+Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
-Classifier: Programming Language :: Python :: 3
-Classifier: Programming Language :: Python :: 3.6
-Classifier: Programming Language :: Python :: 3.7
-Classifier: Programming Language :: Python :: 3.8
-Classifier: Programming Language :: Python :: 3.9
+Classifier: Intended Audience :: Developers
+Classifier: Development Status :: 3 - Alpha
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 
@@ -59,5 +55,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License.
-
-
