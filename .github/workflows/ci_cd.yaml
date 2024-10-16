@@ -18,7 +18,7 @@ jobs:
         strategy:
             # this matrix defines the different configurations of the virtual environment
             matrix:
-                python-version: [3.8, 3.9, "3.10"]
+                python-version: [3.9, "3.10"]
 
         # A job contains a series of steps/tasks to execute
         steps:
