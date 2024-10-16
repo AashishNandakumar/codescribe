@@ -1,0 +1,83 @@
+# name of the workflow
+name: CodeScribe CI/CD
+
+# define on which events to trigger this workflow
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+# what jobs to perform when the workflow is triggered
+jobs:
+    # job-1
+    test: # job name
+        # which machine will the job run
+        runs-on: ubuntu-latest
+        # setting the strategies for the virtual environment
+        strategy:
+            # this matrix defines the different configurations of the virtual environment
+            matrix:
+                python-version: [3.7, 3.8, 3.9, "3.10"]
+
+        # A job contains a series of steps/tasks to execute
+        steps:
+            # selects a base action to use, actions are reusable units of code
+            - uses: actions/checkout@v2
+
+            # name of the step-1
+            - name: Set up Python ${{matrix.python-version}}
+              uses: actions/setup-python@v2
+              # uses to setup the configuration of the actions, act as environment variables
+              with:
+                  python-version: ${{matrix.python-version}}
+
+            # name of the step-2
+            - name: Install dependencies
+              # run commands using the OS shell
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            # name of the step-3
+            - name: Run tests
+              run: |
+                  python -m unittest discover tests
+
+    # job-2
+    build-and-publish:
+        # tells which job to be executed first for this job to be executed
+        needs: test
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: "3.9"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install setuptools wheel twine
+
+            - name: Update version
+              run: |
+                  current_version = $(grep -oP '(?<=version = )\d+\.\d+\.\d+' setup.cfg)
+                  new_version = $(echo $current_version | awk -F. '{$NF = $NF + 1;}1' sed 's/ /./g')
+                  sed -i "s/version = $current_version/version = $new_version/" setup.cfg
+
+            - name: Build package
+              run: |
+                  python -m build
+
+            - name: Publish to PyPI
+              # sets the environment variables to be used by steps
+              env:
+                  TWINE_USERNAME: ${{secrets.PyPI_USERNAME}}
+                  TWINE_PASSWORD: ${{secrets.PyPI_PASSWORD}}
+              run: |
+                  twine upload dist/*
